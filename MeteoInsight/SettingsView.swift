@@ -15,7 +15,7 @@ struct SettingsView: View {
     // Der String-Key muss eindeutig sein.
     @AppStorage("autoRefreshEnabled") var autoRefreshEnabled: Bool = true
     @AppStorage("selectedStationId") var selectedStationId: String = "YOUR_STATION_ID" // Standard-Station ID
-    @AppStorage("apiKey") var apiKey: String = "YOUR_WEATHER_API_KEY" // <-- Hinzugefügt: API-Schlüssel
+    @AppStorage("apiKey") var apiKey: String = "YOUR_WEATHER_API_KEY" // API-Schlüssel für PWS-Beobachtungen
     @AppStorage("displayTemperatureUnit") var displayTemperatureUnit: String = "Celsius" // z.B. "Celsius" oder "Fahrenheit"
     
     // Hinzugefügte @AppStorage-Variablen für Längen- und Breitengrad,
@@ -23,9 +23,13 @@ struct SettingsView: View {
     @AppStorage("latitude") private var storedLatitude: Double = 52.2039 // Beispiel: Melle Latitude
     @AppStorage("longitude") private var storedLongitude: Double = 8.3374 // Beispiel: Melle Longitude
 
+    // Hinzugefügte @AppStorage-Variablen für die stündliche Vorhersage API
+    @AppStorage("hourlyPostalKey") private var hourlyPostalKey: String = "49328:DE" // Standard-Postal Key für stündliche Vorhersage
+    @AppStorage("hourlyApiKey") private var hourlyApiKey: String = "YOUR_HOURLY_API_KEY" // API-Schlüssel für stündliche Vorhersage
+
     var body: some View {
         Form {
-            Section(header: Text("Wetterdaten-Einstellungen")) {
+            Section(header: Text("Wetterdaten-Einstellungen (Aktuelle Beobachtungen)")) {
                 Toggle(isOn: $autoRefreshEnabled) {
                     Text("Automatische Aktualisierung")
                 }
@@ -41,11 +45,11 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundColor(.gray)
                 
-                // Textfeld für den API-Schlüssel
-                TextField("API-Schlüssel", text: $apiKey) // <-- Hinzugefügt: Textfeld für API-Schlüssel
+                // Textfeld für den API-Schlüssel der aktuellen Beobachtungen
+                TextField("API-Schlüssel (Aktuelle Beobachtungen)", text: $apiKey)
                     .textFieldStyle(.roundedBorder)
                     .disableAutocorrection(true)
-                Text("Geben Sie Ihren API-Schlüssel für die Wetterdaten ein.")
+                Text("Geben Sie Ihren API-Schlüssel für die aktuellen Wetterdaten ein.")
                     .font(.caption)
                     .foregroundColor(.gray)
                 
@@ -67,6 +71,24 @@ struct SettingsView: View {
                     Text("Fahrenheit (°F)").tag("Fahrenheit")
                 }
                 .pickerStyle(.segmented) // Segmentierter Picker für Einheiten
+            }
+
+            Section(header: Text("Wetterdaten-Einstellungen (Stündliche Vorhersage)")) {
+                // Textfeld für den Postal Key der stündlichen Vorhersage
+                TextField("Postal Key (Stündliche Vorhersage)", text: $hourlyPostalKey)
+                    .textFieldStyle(.roundedBorder)
+                    .disableAutocorrection(true)
+                Text("Geben Sie den Postal Key für die stündliche Wettervorhersage ein (z.B. 49328:DE).")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+
+                // Textfeld für den API-Schlüssel der stündlichen Vorhersage
+                TextField("API-Schlüssel (Stündliche Vorhersage)", text: $hourlyApiKey)
+                    .textFieldStyle(.roundedBorder)
+                    .disableAutocorrection(true)
+                Text("Geben Sie Ihren API-Schlüssel für die stündliche Wettervorhersage ein.")
+                    .font(.caption)
+                    .foregroundColor(.gray)
             }
             
             Section(header: Text("Allgemeine Einstellungen")) {
