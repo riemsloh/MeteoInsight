@@ -24,7 +24,7 @@ struct HeaderView: View {
                 // In WeatherModels.swift gibt es keine direkte 'conditionText' Eigenschaft.
                 // Sie müssten diese entweder aus 'wxPhraseLong' oder 'wxPhraseShort' ableiten.
                 // Für dieses Beispiel verwenden wir 'wxPhraseShort'
-                Text(currentObservation?.wxPhraseShort ?? "Wetter wird geladen...")
+                Text(currentObservation?.neighborhood ?? "Wetter wird geladen...")
                     .font(.title2)
                     .foregroundColor(.gray)
             }

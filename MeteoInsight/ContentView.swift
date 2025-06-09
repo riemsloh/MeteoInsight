@@ -86,8 +86,8 @@ struct ContentView: View {
                 // dass wir den aktuellen Standort des Geräts verwenden möchten, um die Vorhersage zu erhalten.
                 // Die PWS-Daten (aktuelle Beobachtung) sind stationär.
                 // Aktualisieren Sie die AppStorage-Werte im ForecastViewModel
-                forecastViewModel.storedLatitude = newLocation.coordinate.latitude
-                forecastViewModel.storedLongitude = newLocation.coordinate.longitude
+             //   forecastViewModel.storedLatitude = newLocation.coordinate.latitude
+             //   forecastViewModel.storedLongitude = newLocation.coordinate.longitude
 
                 Task {
                     await forecastViewModel.fetchForecastData()

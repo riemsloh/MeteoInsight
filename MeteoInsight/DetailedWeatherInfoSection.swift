@@ -25,7 +25,7 @@ struct DetailedWeatherInfoSection: View {
                 }
                 GridRow {
                     DetailItem(label: "Druck", value: (currentObservation?.metric?.pressure).map { "\($0) mb" } ?? "N/A", icon: "gauge")
-                    DetailItem(label: "Sichtweite", value: (currentObservation?.metric?.vis).map { "\(Int($0)) km" } ?? "N/A", icon: "eye.fill") // Annahme vis in UnitsData
+                    DetailItem(label: "Sichtweite", value: (currentObservation?.metric?.heatIndex).map { "\(Int($0)) km" } ?? "N/A", icon: "eye.fill") // Annahme vis in UnitsData
                     DetailItem(label: "UV Index", value: (currentObservation?.uv).map { "\(Int($0))" } ?? "N/A", icon: "sun.max.fill")
                 }
                 GridRow {

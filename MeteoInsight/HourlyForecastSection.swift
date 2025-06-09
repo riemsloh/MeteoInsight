@@ -1,10 +1,3 @@
-//
-//  HourlyForecastSection.swift
-//  MeteoInsight
-//
-//  Created by Olaf Lueg on 08.06.25.
-//
-
 import SwiftUI
 import Foundation // Für DateFormatter
 
@@ -28,60 +21,21 @@ struct HourlyForecastSection: View {
                         Text("Fehler: \(error)")
                             .foregroundColor(.red)
                             .frame(width: 250, height: 100)
-                    } else if let dayparts = forecastResponse?.daypart {
-                        // Iteriere durch die Dayparts, die als stündliche oder 12-stündliche Abschnitte dienen können.
-                        // Im Falle der 5-Tages-Vorhersage sind es 12-Stunden-Abschnitte (Tag/Nacht).
-                        // Wenn Sie echte stündliche Daten benötigen, bräuchten Sie einen anderen API-Endpunkt.
-                        ForEach(0..<dayparts.count, id: \.self) { index in
-                            let daypart = dayparts[index]
+                    } else if let response = forecastResponse,
+                              let dayparts = response.daypart,
+                              let validTimeLocals = response.validTimeLocal {
+                        
+                        // Filtern der Dayparts für Tag und Nacht, um eine konsistente Ansicht zu erhalten
+                        // Die 5-Tages-Vorhersage liefert oft 12-Stunden-Abschnitte (Tag/Nacht).
+                        // Wenn echte stündliche Daten benötigt werden, bräuchte man einen anderen API-Endpunkt.
+                        let relevantDayparts = dayparts.prefix(20) // Beispiel: Zeige die nächsten 20 Perioden (ca. 10 Tage Tag/Nacht)
 
-                            // Hier wird es etwas komplexer, da alle Eigenschaften Arrays sind.
-                            // Wir müssen mit dem 'index' auf die richtigen Werte zugreifen.
-                            // Stellen Sie sicher, dass der Index für alle Arrays gültig ist.
-                            guard let temp = daypart.temperature?[index],
-                                  let iconCode = daypart.iconCode?[index],
-                                  let timeLocal = forecastResponse?.validTimeLocal?[index], // Uhrzeit vom Top-Level
-                                  let precipChance = daypart.precipChance?[index] else {
-                                        // Überspringen, wenn grundlegende Daten fehlen
-                                        return
-                                  }
+                        ForEach(0..<min(relevantDayparts.count, validTimeLocals.count), id: \.self) { index in
+                            let daypart = relevantDayparts[index]
+                            let timeString = validTimeLocals[index]
 
-                            VStack {
-                                // Uhrzeit formatieren (z.B. "00:00")
-                                Text(timeLocal.formatToHourlyTime() ?? "N/A")
-                                    .font(.caption)
-
-                                // Icon laden (Beispiel-URL, anpassen an Ihre WU-Icon-URL-Struktur)
-                                // Weather Underground Icons haben oft ein Format wie:
-                                // "https://www.weather.com/weather/images/core/forecast/assets/v1/7.svg"
-                                // oder "https://www.weather.com/images/web/personal_weather_station/icons/\(iconCode).png"
-                                if let iconUrl = URL(string: "https://www.weather.com/weather/images/core/forecast/assets/v1/\(iconCode).svg") {
-                                    AsyncImage(url: iconUrl) { image in
-                                        image.resizable()
-                                            .scaledToFit()
-                                            .frame(width: 30, height: 30)
-                                    } placeholder: {
-                                        ProgressView()
-                                            .frame(width: 30, height: 30)
-                                    }
-                                } else {
-                                    Image(systemName: "cloud.fill") // Fallback
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 30, height: 30)
-                                }
-
-                                Text("\(temp)°")
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-
-                                // Regenwahrscheinlichkeit nur anzeigen, wenn relevant
-                                if precipChance > 0 {
-                                    Text("\(precipChance)%")
-                                        .font(.caption2)
-                                        .foregroundColor(.blue)
-                                }
-                            }
+                            // Hier wird die neue Sub-View verwendet
+                            HourlyForecastItemView(daypart: daypart, timeString: timeString, index: index)
                         }
                     } else {
                         Text("Keine stündlichen Vorhersagedaten verfügbar.")
@@ -96,7 +50,7 @@ struct HourlyForecastSection: View {
     }
 }
 
-// Hilfs-Erweiterung für die Zeitformatierung
+// Hilfs-Erweiterung für die Zeitformatierung (kann global sein oder hier bleiben)
 extension String {
     func formatToHourlyTime() -> String? {
         let formatter = DateFormatter()
@@ -109,5 +63,52 @@ extension String {
             return formatter.string(from: date)
         }
         return nil
+    }
+}
+
+// MARK: - Neue Sub-View: HourlyForecastItemView
+struct HourlyForecastItemView: View {
+    let daypart: Daypart
+    let timeString: String
+    let index: Int // Benötigt, um auf die optionalen Arrays im Daypart zuzugreifen
+
+    var body: some View {
+        VStack {
+            Text(timeString.formatToHourlyTime() ?? "N/A")
+                .font(.caption)
+
+            // Icon laden
+            if let iconCode = daypart.iconCode?[index], // Zugriff auf den Wert im Array
+               let iconUrl = URL(string: "https://www.weather.com/weather/images/core/forecast/assets/v1/\(iconCode).svg") {
+                AsyncImage(url: iconUrl) { image in
+                    image.resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                } placeholder: {
+                    ProgressView()
+                        .frame(width: 30, height: 30)
+                }
+            } else {
+                Image(systemName: "cloud.fill") // Fallback
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
+            }
+
+            Text("\(Int(daypart.temperature?[index] ?? 0))°") // Zugriff auf den Wert im Array
+                .font(.subheadline)
+                .fontWeight(.medium)
+
+            // Regenwahrscheinlichkeit nur anzeigen, wenn relevant
+            if let precipChance = daypart.precipChance?[index], precipChance > 0 { // Zugriff auf den Wert im Array
+                Text("\(precipChance)%")
+                    .font(.caption2)
+                    .foregroundColor(.blue)
+            } else {
+                Text("") // Platzhalter
+                    .font(.caption2)
+                    .frame(height: 15) // Platzhalter, um Layout-Verschiebungen zu vermeiden
+            }
+        }
     }
 }
