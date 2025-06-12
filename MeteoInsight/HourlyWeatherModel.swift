@@ -45,7 +45,7 @@ struct HourlyForecastResponse: Codable {
     let scatteredCloudBaseHeight: [Int]?
     let pressureAltimeter: [Double]?
     let qpfIce: [Double]?
-    let qualifierSet: [[String]]? // Array von Arrays, da es leere Arrays sein können
+   // let qualifierSet: [[String]]? // Array von Arrays, da es leere Arrays sein können
     let temperatureWetBulbGlobe: [Double]?
     let conditionalProbabilityThunder: [Int]?
     let conditionalProbabilitySleet: [Int]?
@@ -94,7 +94,7 @@ struct HourlyForecastResponse: Codable {
                 scatteredCloudBaseHeight: scatteredCloudBaseHeight?[i],
                 pressureAltimeter: pressureAltimeter?[i],
                 qpfIce: qpfIce?[i],
-                qualifierSet: qualifierSet?[i],
+             //   qualifierSet: qualifierSet?[i],
                 temperatureWetBulbGlobe: temperatureWetBulbGlobe?[i],
                 conditionalProbabilityThunder: conditionalProbabilityThunder?[i],
                 conditionalProbabilitySleet: conditionalProbabilitySleet?[i],
@@ -146,7 +146,7 @@ struct HourlyForecastData: Codable, Identifiable {
     let scatteredCloudBaseHeight: Int?
     let pressureAltimeter: Double?
     let qpfIce: Double?
-    let qualifierSet: [String]?
+  //  let qualifierSet: [String]?
     let temperatureWetBulbGlobe: Double?
     let conditionalProbabilityThunder: Int?
     let conditionalProbabilitySleet: Int?

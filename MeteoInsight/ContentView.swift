@@ -6,6 +6,7 @@ struct ContentView: View {
     @StateObject var hourlyViewModel = HourlyWeatherViewModel()
 
     var body: some View {
+        MacStatusView()
         NavigationView {
             VStack(spacing: 20) {
                 Text("Willkommen bei AuraCast")
