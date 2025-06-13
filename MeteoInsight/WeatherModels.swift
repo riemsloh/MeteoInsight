@@ -56,6 +56,18 @@ struct Observation: Codable {
         case qcStatus
         case metric // Der Name des Objekts für die metrischen Maßeinheiten-Daten
     }
+    // Optional: Formatierter Tag und Datum für die Anzeige
+    var formattedDayAndDate: String {
+        guard let timeString = obsTimeLocal else { return "N/A" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        if let date = formatter.date(from: timeString) {
+            formatter.dateFormat = "EEEE, dd.MM." // z.B. "Montag, 09.06."
+            formatter.locale = Locale(identifier: "de_DE") // Für deutschen Wochentag
+            return formatter.string(from: date)
+        }
+        return "N/A"
+    }
 }
 
 // MARK: - UnitsData

@@ -84,6 +84,7 @@ class WeatherViewModel: ObservableObject {
             }
             else{
                 print("Wetterdaten erfolgreich von Wunderground für \(observation?.neighborhood ?? "N/A") geladen!")
+                print("Rohdaten: \(observation?.obsTimeLocal ?? "N/A")")
             }
             
         } catch let decodingError as DecodingError {
