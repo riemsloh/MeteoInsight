@@ -9,7 +9,7 @@ import Foundation
 // MARK: - Top-Level Structure
 /// Repräsentiert die gesamte API-Antwort für Wetterbeobachtungen.
 /// Enthält ein Array von 'Observation'-Objekten.
-struct WeatherObservationResponse: Codable {
+struct PWSObservationResponse: Codable {
     let observations: [Observation]? // Das Array der Wetterbeobachtungen
 }
 
@@ -58,11 +58,11 @@ struct Observation: Codable {
     }
     // Optional: Formatierter Tag und Datum für die Anzeige
     var formattedDayAndDate: String {
-        guard let timeString = obsTimeLocal else { return "N/A" }
+        guard let timeString = obsTimeUtc else { return "N/A" }
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         if let date = formatter.date(from: timeString) {
-            formatter.dateFormat = "EEEE, dd.MM." // z.B. "Montag, 09.06."
+            formatter.dateFormat = "EEEE, dd.MM., HH:mm:ss" // z.B. "Montag, 09.06., 22:44:01"
             formatter.locale = Locale(identifier: "de_DE") // Für deutschen Wochentag
             return formatter.string(from: date)
         }

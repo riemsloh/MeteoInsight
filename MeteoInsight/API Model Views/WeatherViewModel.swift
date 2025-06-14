@@ -18,7 +18,7 @@ class WeatherViewModel: ObservableObject {
     // Lese die Konfigurationswerte direkt aus AppStorage
     @AppStorage("selectedStationId") private var storedStationId: String = "YOUR_STATION_ID"
     @AppStorage("apiKey") private var storedApiKey: String = "YOUR_WEATHER_API_KEY"
-    @AppStorage("autoRefreshEnabled") private var autoRefreshEnabled: Bool = true // Auch diese Einstellung wird hier benötigt
+    @AppStorage("autoRefreshEnabled")  var autoRefreshEnabled: Bool = true // Auch diese Einstellung wird hier benötigt
 
     // Die Basis-URL für die Weather Company PWS Observations API.
     private let baseURL = "https://api.weather.com/v2/pws/observations/current"
@@ -72,11 +72,11 @@ class WeatherViewModel: ObservableObject {
             
             // JSON-Daten decodieren.
             let decoder = JSONDecoder()
-            let weatherResponse = try decoder.decode(WeatherObservationResponse.self, from: data)
+            let PWSResponse = try decoder.decode(PWSObservationResponse.self, from: data)
             
             // Die erste Beobachtung (falls vorhanden) speichern.
             // Die API liefert ein Array, auch wenn es meist nur eine aktuelle Beobachtung ist.
-            observation = weatherResponse.observations?.first
+            observation = PWSResponse.observations?.first
             
             // Wenn keine Beobachtungen gefunden wurden, eine entsprechende Meldung setzen.
             if observation == nil {
